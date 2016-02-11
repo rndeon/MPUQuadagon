@@ -16,19 +16,11 @@ Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays, numberOfVe
 
 AccelReading MPU;
 
-//#define fieldsize 32 //screensize*4
-#define starscale 25 ///the stored values are divided by this number before translation to the 8x8 grid for displaying
-//bool starfield[fieldsize][fieldsize];
-//int star_pos_x=0;
-//int star_pos_y=0;
+#define accelscale 25 ///the acceleration values are divided by this number before translation to the 8x8 grid for displaying
 
 int playerx=2;
 int playery=2;
 unsigned long prev_time=0;
-//int v_x=0;
-//int v_y=0;
-//int max_vx=4*starscale;
-//int max_vy=4*starscale;
 
 ///game vars
 int holex=0;
@@ -108,16 +100,6 @@ void setup()
 //  ...
   matrix.setRotation(0, 0);    // The first display is position upside down
 
-  ///Starfield initialization
-//  randomSeed(analogRead(0));
-//  for(int xpos=0; xpos<fieldsize;xpos++)
-//  {
-//    for(int ypos=0;ypos<fieldsize;ypos++)
-//    {
-//      starfield[xpos][ypos] = random(10) > 6? HIGH : LOW;
-//    }
-//  }
-
   //game setup
   randomize_hole();
   ///buttons
@@ -130,10 +112,10 @@ void setup()
 }
 void movePlayer(double valuex, double valuey)
 {
-  valuex = valuex / starscale ;
+  valuex = valuex / accelscale ;
   playerx =  floor(valuex);
   playerx += 4;
-  valuey = (100- valuey) / starscale  ;
+  valuey = (100- valuey) / accelscale  ;
   playery = floor(valuey);
  // playery += 4;
 
@@ -194,30 +176,6 @@ void drawToDisplay(boolean gameOverScreen){
     //hole
     matrix.fillRect(holex,holey,matrix.width()/2,matrix.height()/2,LOW);  
   }
-  ///starfield
-//  int xstartedge=floor(star_pos_x/starscale);
-//  int ystartedge=floor(star_pos_y/starscale);
-//  if(frames_counter ==1)
-//  {
-//    //matrix.setIntensity(100);
-//    for(int xpos=0; xpos<screensize;xpos++)
-//    {
-//      for(int ypos=0; ypos<screensize;ypos++)
-//      {
-//          ///if screen's view goes off the edge, wrap around to beginning of starfield
-//          if(xstartedge + xpos >= fieldsize){ xstartedge -= fieldsize; }
-//          if(ystartedge + ypos >= fieldsize){ ystartedge -= fieldsize; }
-//          matrix.drawPixel(xpos,ypos,starfield[xstartedge + xpos][ystartedge + ypos]);
-//      }
-//    }
-//    matrix.drawPixel(playerx,playery,HIGH);
-//    frames_counter =0;
-//  } else {
-//    // matrix.setIntensity(255);
-//    matrix.drawPixel(playerx,playery,HIGH);
-//    frames_counter++;
-//  }
-  
     //player
     matrix.drawPixel(playerx,playery,HIGH);
   matrix.write(); // Send bitmap to display 
@@ -256,11 +214,8 @@ void loop()
       }
     }
     //update player position
-//    if (currentTime - previousPlayerTime >=playerInterval - playerIntervalLevelMod*level)
-//    {
        movePlayer(MPU.GetX(),MPU.GetY() );
        previousPlayerTime = currentTime;
-//    }
     //check collision
     if(getShell(playerx,playery) == shell_num && !gameOver){
        gameOver = ! playerIsInHole();
@@ -274,27 +229,5 @@ void loop()
     level=0;
   }
   drawToDisplay(gameOver);
-//  unsigned long dt = millis() - prev_time;
-  //update background position
-//  int accel_x= MPU.GetX()/10;
-//  int accel_y= ((100- MPU.GetY()) - 4 * starscale)/10;
-//  if(MPU.GetX() >25) { v_x += accel_x;
-//    }else if(MPU.GetX() < -25) { v_x += accel_x;
-//    }//else{ v_x=0;}
-//  if ( v_x > max_vx) v_x = max_vx;
-//  if ( v_x < -max_vx) v_x = -max_vx;
-//  star_pos_x += v_x/starscale;
-//  if(star_pos_x >= fieldsize*starscale){ star_pos_x -=fieldsize*starscale; 
-//    } else if (star_pos_x < 0){ star_pos_x +=fieldsize*starscale; }
-//  if(MPU.GetY() >25) { v_y += accel_y;
-//    }else if(MPU.GetY() <-25) { v_y += accel_y;
-//    }//else{ v_y=0;};
-//  if ( v_y > max_vy) v_y = max_vy;
-//  if ( v_y < -max_vy) v_y = -max_vy;
-//  star_pos_y += v_y/starscale;
-//  if(star_pos_y >= fieldsize*starscale){ star_pos_y -=fieldsize*starscale; 
-//    }else if(star_pos_y < 0){ star_pos_y +=fieldsize*starscale; }
-//  prev_time = millis();
-//  drawToDisplay(true);
   delay(10);
 }
