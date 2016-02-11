@@ -48,46 +48,10 @@ void randomize_hole(){
 
 void setup()
 {
-  int error;
-  uint8_t c;
-  //pinMode(led1, OUTPUT);
-  //pinMode(led2, OUTPUT);
-
-  Serial.begin(9600);
-  Serial.println(F("InvenSense MPU-6050"));
-  Serial.println(F("June 2012"));
-
   // Initialize the 'Wire' class for the I2C-bus.
   Wire.begin();
-
-
-  // default at power-up:
-  //    Gyro at 250 degrees second
-  //    Acceleration at 2g
-  //    Clock source at internal 8MHz
-  //    The device is in sleep mode.
-  //
-
-  error = MPU6050_read (MPU6050_WHO_AM_I, &c, 1);
-  Serial.print(F("WHO_AM_I : "));
-  Serial.print(c,HEX);
-  Serial.print(F(", error = "));
-  Serial.println(error,DEC);
-
-  // According to the datasheet, the 'sleep' bit
-  // should read a '1'.
-  // That bit has to be cleared, since the sensor
-  // is in sleep mode at power-up. 
-  error = MPU6050_read (MPU6050_PWR_MGMT_1, &c, 1);
-  Serial.print(F("PWR_MGMT_1 : "));
-  Serial.print(c,HEX);
-  Serial.print(F(", error = "));
-  Serial.println(error,DEC);
-
-  // initialize all the readings to 0:
+  ///Initialize MPU class, which clears or sets different sensor bits and 
   MPU.Initialize();
-  // Clear the 'sleep' bit to start the sensor.
-  MPU6050_write_reg (MPU6050_PWR_MGMT_1, 0);
 
 ///LED setup
    matrix.setIntensity(0);
